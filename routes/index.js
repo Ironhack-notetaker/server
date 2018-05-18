@@ -7,3 +7,5 @@ router.get('/', (req, res, next) => {
 });
 
 module.exports = router;
+
+console.log("que pedo sirve o no?");
