@@ -4,8 +4,10 @@ const User           = require("../models/user");
 const ensureLogin    = require("connect-ensure-login");
 const passport       = require("passport");
 const flash          = require("connect-flash");
-const bcrypt         = require("bcrypt");
+const bcrypt         = require("bcryptjs");
 const bcryptSalt     = 10;
+const session        = require("express-session");
+
 
 router.post("/signup", (req, res, next) => {
   const username = req.body.username;
@@ -39,7 +41,7 @@ router.post("/signup", (req, res, next) => {
     const newUser = User({
       username: username,
       password: hashPass,
-      email: email,
+      // email: email
     });
     
     newUser.save((err) => {
@@ -60,6 +62,11 @@ router.post("/signup", (req, res, next) => {
   });
 });
 
+// router.post('/login', passport.authenticate('local', ({ failureRedirect: '/login' })),
+//   function(req, res) {
+//     res.redirect('/');
+//   });
+
 router.post("/login", (req, res, next) => {
   passport.authenticate('local', (err, theUser, failureDetails) => {
      if (err) {
@@ -77,17 +84,17 @@ router.post("/login", (req, res, next) => {
         res.status(500).json({ message: 'Something went wrong' });
         return;
       }
-
       res.status(200).json(req.user);
-  })
-});
+    })
+  });
+})
 
-router.get('/logout', (req, res) => {
+router.post('/logout', (req, res) => {
   req.logout();
   res.status(200).json({ message: 'Success' })
 });
 
-router.get('/loggedin', (req, res, next) => {
+router.post('/loggedin', (req, res, next) => {
   if (req.isAuthenticated()) {
     res.json(req.user);
     return;
@@ -96,25 +103,30 @@ router.get('/loggedin', (req, res, next) => {
   res.json({ message: 'Unauthorized' });
 });
 
-
+router.post('/private', (req, res, next) => {
+  if (req.isAuthenticated()) {
+    res.json({ message: 'This is a private message' });
+    return;
+  }
+  res.status(403).json({ message: 'Unauthorized' });
+});
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   } else {
-
-    res.redirect('/login')
+    res.status(200).json(req.user);
   }
 }
 
-function checkRoles(role) {
-  return function(req, res, next) {
-    if (req.isAuthenticated() && req.user.role === role) {
-      return next();
-    } else {
-      res.redirect('/')
-    }
-  }
-}
+// function checkRoles(role) {
+//   return function(req, res, next) {
+//     if (req.isAuthenticated() && req.user.role === role) {
+//       return next();
+//     } else {
+//       res.redirect('/')
+//     }
+//   }
+// }
 
  module.exports = router;
