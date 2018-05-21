@@ -5,18 +5,12 @@ const Note    = require('../models/note')
 
 /* get the list of all the notes */
 router.get('/', (req, res, next) => {
-  Note.find()
-  .then((list)=>{
-    res.json(list);
-  })
-  .catch((err)=>{
-    res.json(err)
-  })
+  res.render('index')
 });
 
 
 //get details about a sepcific task
-router.get('/:noteID', (req, res, next) => {
+router.get('note/:noteID', (req, res, next) => {
   Note.findById(req.params.noteID)
   .then((theNote)=>{
     res.json(theNote);

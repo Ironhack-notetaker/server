@@ -1,7 +1,7 @@
 const express        = require("express");
 const router         = express.Router();
 const User           = require("../models/user");
-const ensureLogin    = require("connect-ensure-login");
+// const ensureLogin    = require("connect-ensure-login");
 const passport       = require("passport");
 const flash          = require("connect-flash");
 const bcrypt         = require("bcrypt");
@@ -39,7 +39,7 @@ router.post("/signup", (req, res, next) => {
     const newUser = User({
       username: username,
       password: hashPass,
-      email: email,
+      // email: email
     });
     
     newUser.save((err) => {
@@ -79,8 +79,9 @@ router.post("/login", (req, res, next) => {
       }
 
       res.status(200).json(req.user);
-  })
-});
+    })
+  });
+})
 
 router.get('/logout', (req, res) => {
   req.logout();
@@ -102,7 +103,6 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   } else {
-
     res.redirect('/login')
   }
 }
