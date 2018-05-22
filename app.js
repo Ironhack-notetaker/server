@@ -105,6 +105,7 @@ app.use('/', index);
 const userApi = require('./routes/auth-routes')
 app.use('/api', userApi);
 const noteApi = require('./routes/notes-routes')
+
 app.use('/', noteApi);
 const teamApi = require('./routes/team-routes')
 app.use('/', teamApi);

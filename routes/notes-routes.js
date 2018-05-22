@@ -13,6 +13,7 @@ router.get('/notes', (req, res, next) => {
 })
 
 router.get('note/:noteID', (req, res, next) => {
+
   Note.findById(req.params.noteID)
   .then((theNote)=>{
     res.json(theNote);
@@ -23,7 +24,7 @@ router.get('note/:noteID', (req, res, next) => {
 });
 
 //add a NEW task
-router.post('/notes', (req, res, next)=>{
+router.post('/notes/create', (req, res, next)=>{
   console.log(req.body);
     const newNote = {
       title: req.body.title,
@@ -55,7 +56,6 @@ router.post('/notes', (req, res, next)=>{
     })
 
     router.post('/note/update/:id', (req, res, next)=>{
-      console.log(req.body)
       Note.findByIdAndUpdate(req.params.id, req.body)
       .then((updatedNote)=>{
         res.json(updatedNote)
