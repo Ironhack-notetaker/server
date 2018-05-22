@@ -104,6 +104,7 @@ const index = require('./routes/index');
 app.use('/', index);
 const userApi = require('./routes/auth-routes')
 app.use('/api', userApi);
-
+const noteApi = require('./routes/notes-routes')
+app.use('/', noteApi)
 
 module.exports = app;

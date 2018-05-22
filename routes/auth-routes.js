@@ -80,15 +80,15 @@ router.post('/login', (req, res, next) => {
   User.findOne({
       username: req.body.username
     })
-    .then((userFromDb) => {
-      if (userFromDb === null) {
+    .then((user) => {
+      if (user === null) {
         res.status(400).json({
           error: 'Username is invalid'
         });
         return;
       }
       const isPasswordGood =
-        bcrypt.compareSync(req.body.password, userFromDb.password);
+        bcrypt.compareSync(req.body.password, user.password);
       if (isPasswordGood === false) {
         res.status(400).json({
           error: 'Password is invalid'
@@ -96,14 +96,13 @@ router.post('/login', (req, res, next) => {
         return;
       }
 
-      req.login(userFromDb, (err) => {
+      req.login(user, (err) => {
         // clear the "encryptedPassword" before sending the user info
         // ( otherwise its a security risk )
-        userFromDb.encryptedPassword = undefined;
+        user.encryptedPassword = undefined;
 
         res.status(200).json({
-          isLoggedIn: true,
-          userInfo: userFromDb
+          user
         });
       }); // req.login
     })
