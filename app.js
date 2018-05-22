@@ -85,6 +85,8 @@ passport.use(new LocalStrategy({
     return next(null, user);
   });
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(cors
   ({
@@ -97,8 +99,6 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }));
-app.use(passport.initialize());
-app.use(passport.session());
 
 const index = require('./routes/index');
 app.use('/', index);
