@@ -12,11 +12,9 @@ const User           = require('./models/user');
 const session        = require("express-session");
 const bcrypt         = require("bcryptjs");
 const passport       = require("passport");
-const app            = express();
 const LocalStrategy  = require("passport-local").Strategy;
 const flash          = require("connect-flash");
 const cors           = require('cors');
-
 
 mongoose.Promise = Promise;
 mongoose
@@ -32,10 +30,12 @@ const debug = require('debug')(`${app_name}:${path.basename(__filename).split('.
 
 // Middleware Setup
 
+const app = express();
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(require('body-parser').urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Express View engine setup
 
@@ -91,19 +91,24 @@ passport.use(new LocalStrategy({
   });
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(cors
   ({
     credentials: true,                 // allow other domains to send cookies
     origin: ["http://localhost:4200"]  // these are the domains that are allowed
   })
 );
+app.use(session({
+  secret: "our-passport-local-strategy-app",
+  resave: true,
+  saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 const index = require('./routes/index');
 app.use('/', index);
-const routes = require('./routes/auth-routes')
-app.use('/api', routes);
+const userApi = require('./routes/auth-routes')
+app.use('/api', userApi);
 
 
 module.exports = app;
