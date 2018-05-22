@@ -6,6 +6,8 @@ const passport       = require("passport");
 const flash          = require("connect-flash");
 const bcrypt         = require("bcryptjs");
 const bcryptSalt     = 10;
+const session        = require("express-session");
+
 
 router.post("/signup", (req, res, next) => {
   const username = req.body.username;
