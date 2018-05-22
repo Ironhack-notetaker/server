@@ -2,6 +2,16 @@ const express = require('express');
 const router  = express.Router();
 const Note    = require('../models/note');
 
+router.get('/notes', (req, res, next) => {
+  Note.find()
+  .then(notes => {
+    res.json(notes);
+  })
+  .catch(err => {
+    res.json(err);
+  })
+})
+
 router.get('note/:noteID', (req, res, next) => {
   Note.findById(req.params.noteID)
   .then((theNote)=>{
