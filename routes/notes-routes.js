@@ -12,7 +12,8 @@ router.get('/notes', (req, res, next) => {
   })
 })
 
-router.get('/note/:noteID', (req, res, next) => {
+router.get('note/:noteID', (req, res, next) => {
+
   Note.findById(req.params.noteID)
   .then((theNote)=>{
     res.json(theNote);
