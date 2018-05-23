@@ -3,7 +3,7 @@ const Schema   = mongoose.Schema;
 
 const teamSchema = new Schema({
   user : String,
-  note: [String],
+  note: {type: [Object]},
   teamName: String,
   urgency: String,
   status: String,

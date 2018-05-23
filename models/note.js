@@ -4,13 +4,13 @@ const Schema   = mongoose.Schema;
 const noteSchema = new Schema({
   user: String,
   title : String,
-  text: String,
-  status: String,
+  text: {type: String, default: ''},
+  status: {type: String, default: 'unfinished'},
   urgency: String,
-  category: String,
-  date: Number,
+  category: {type: String, default: 'Notes'},
+  date: {type: Date, default: Date.now()},
   theme: {type: [String], default: []},
-  format: String
+  format: {type: String, default: ''}
 
 });
 
