@@ -33,7 +33,7 @@ const debug = require('debug')(`${app_name}:${path.basename(__filename).split('.
 const app = express();
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(require('body-parser').urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -46,10 +46,10 @@ app.use(require('node-sass-middleware')({
 }));
 
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'hbs');
+// app.use(express.static(path.join(__dirname, 'public')));
+// app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
 
 // default value for title local
@@ -85,8 +85,6 @@ passport.use(new LocalStrategy({
     return next(null, user);
   });
 }));
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.use(cors
   ({
@@ -94,18 +92,21 @@ app.use(cors
     origin: ["http://localhost:4200"]  // these are the domains that are allowed
   })
 );
+
 app.use(session({
-  secret: "our-passport-local-strategy-app",
   resave: true,
-  saveUninitialized: true
+  saveUninitialized: true,
+  secret: "our-passport-local-strategy-app"
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 const index = require('./routes/index');
 app.use('/', index);
 const userApi = require('./routes/auth-routes')
 app.use('/api', userApi);
 const noteApi = require('./routes/notes-routes')
-
 app.use('/', noteApi);
 const teamApi = require('./routes/team-routes')
 app.use('/', teamApi);

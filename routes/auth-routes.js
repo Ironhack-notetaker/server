@@ -97,12 +97,11 @@ router.post('/login', (req, res, next) => {
       }
 
       req.login(user, (err) => {
-        // clear the "encryptedPassword" before sending the user info
-        // ( otherwise its a security risk )
-        user.encryptedPassword = undefined;
-
+        user.password = undefined;
+        
         res.status(200).json({
-          user
+          isLoggedIn: true,
+          userInfo: user
         });
       }); // req.login
     })
@@ -121,20 +120,37 @@ router.post('/login', (req, res, next) => {
 router.post('/logout', (req, res) => {
   req.logout();
   res.status(200).json({
+    isLoggedIn: false,
+    userInfo: null,
     message: 'Success'
   })
 });
 
-router.post('/loggedin', (req, res, next) => {
-  if (req.isAuthenticated()) {
-    res.json(req.user);
-    return;
-  }
+// router.post('/loggedin', (req, res, next) => {
+//   if (req.isAuthenticated()) {
+//     res.json(req.user);
+//     return;
+//   }
+//   res.json({
+//     message: 'Unauthorized'
+//   });
+// });
 
-  res.json({
-    message: 'Unauthorized'
-  });
-});
+router.get('/loggedin', (req, res, next) => {
+  if (req.user) {
+    req.user.password = undefined;
+
+    res.status(200).json({
+      isLoggedIn: true,
+      userInfo: req.user
+    })
+  } else {
+    res.status(200).json({
+      isLoggedIn: false,
+      userInfo: null
+    })
+  }
+})
 
 router.post('/private', (req, res, next) => {
   if (req.isAuthenticated()) {

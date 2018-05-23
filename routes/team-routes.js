@@ -5,27 +5,26 @@ const Team    = require('../models/team');
 router.get('/team', (req, res, next) => {
   Team.find()
   .then(team => {
-    res.json(team);
+    res.status(200).json(team);
+    console.log(req.body)
   })
   .catch(err => {
     res.json(err);
   })
 })
 
-router.get('team/:teamID', (req, res, next) => {
+router.get('/team/:teamID', (req, res, next) => {
   Team.findById(req.params.teamID)
   .then((theTeam)=>{
     res.json(theTeam);
   })
   .catch((err)=>{
-    res.json(err)
+    res.json(err) 
   })
 });
 
-
-
 //add a NEW task
-router.post('/teams', (req, res, next)=>{
+router.post('/team/new', (req, res, next)=>{
   console.log(req.body);
     const newTeam = {
       user: req.body.user,
@@ -45,7 +44,6 @@ router.post('/teams', (req, res, next)=>{
     })
 
   });
-
 
     router.post('/team/delete/:id', (req, res, next)=>{
       Team.findByIdAndRemove(req.params.id)

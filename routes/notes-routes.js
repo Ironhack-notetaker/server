@@ -12,9 +12,9 @@ router.get('/notes', (req, res, next) => {
   })
 })
 
-router.get('note/:noteID', (req, res, next) => {
+router.get('/notes/:id', (req, res, next) => {
 
-  Note.findById(req.params.noteID)
+  Note.findById(req.params.id)
   .then((theNote)=>{
     res.json(theNote);
   })
