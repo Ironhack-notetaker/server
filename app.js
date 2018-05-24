@@ -46,10 +46,10 @@ app.use(require('node-sass-middleware')({
 }));
 
 
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'hbs');
-// app.use(express.static(path.join(__dirname, 'public')));
-// app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hbs');
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
 
 // default value for title local
@@ -86,12 +86,6 @@ passport.use(new LocalStrategy({
   });
 }));
 
-app.use(cors
-  ({
-    credentials: true,                 // allow other domains to send cookies
-    origin: ["http://localhost:4200"]  // these are the domains that are allowed
-  })
-);
 
 app.use(session({
   resave: true,
@@ -101,6 +95,12 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cors
+  ({
+    credentials: true,                 // allow other domains to send cookies
+    origin: ["http://localhost:4200"]  // these are the domains that are allowed
+  })
+);
 
 const index = require('./routes/index');
 app.use('/', index);

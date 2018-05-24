@@ -126,31 +126,32 @@ router.post('/logout', (req, res) => {
   })
 });
 
-// router.post('/loggedin', (req, res, next) => {
-//   if (req.isAuthenticated()) {
-//     res.json(req.user);
-//     return;
-//   }
-//   res.json({
-//     message: 'Unauthorized'
-//   });
-// });
-
 router.get('/loggedin', (req, res, next) => {
-  if (req.user) {
-    req.user.password = undefined;
-
-    res.status(200).json({
-      isLoggedIn: true,
-      userInfo: req.user
-    })
-  } else {
-    res.status(200).json({
-      isLoggedIn: false,
-      userInfo: null
-    })
+  console.log("BACKEND USER: ", req.user)
+  if (req.isAuthenticated()) {
+    res.json(req.user);
+    return;
   }
-})
+  res.json({
+    message: 'Unauthorized'
+  });
+});
+
+// router.get('/loggedin', (req, res, next) => {
+//   if (req.user) {
+//     req.user.password = undefined;
+
+//     res.status(200).json({
+//       isLoggedIn: true,
+//       userInfo: req.user
+//     })
+//   } else {
+//     res.status(200).json({
+//       isLoggedIn: false,
+//       userInfo: null
+//     })
+//   }
+// })
 
 router.post('/private', (req, res, next) => {
   if (req.isAuthenticated()) {
