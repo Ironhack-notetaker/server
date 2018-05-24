@@ -1,6 +1,8 @@
 const express = require('express');
 const router  = express.Router();
 const Team    = require('../models/team');
+const NoteModel = require('../models/note');
+const clone = require('clone');
 
 router.get('/team', (req, res, next) => {
   Team.find()
@@ -57,15 +59,41 @@ router.post('/team/new', (req, res, next)=>{
     })
 
     router.post('/team/update/:id', (req, res, next)=>{
-      console.log(req.body)
       Team.findByIdAndUpdate(req.params.id, req.body)
       .then((updatedTeam)=>{
         res.json(updatedTeam)
+        req.updatedTeam.save();
       })
       .catch((err)=>{
         res.json(err)
       })
 
+    })
+
+    router.post('/team/notes/:id', (req, res, next) => {
+      const newNote = new NoteModel ({
+        user: req.user.username,
+        title: req.body.title,
+        text: req.body.text,
+        status: req.body.status,
+        urgency: req.body.urgency,
+        category: req.body.category,
+        date: Date.now(),
+        theme: req.body.theme,
+        format: req.body.format,
+      })
+      Team.findById(req.params.id)
+      .then((team) => {
+        console.log(team);
+        team.note.unshift(clone(newNote))
+        team.save()
+        res.json(team)
+        newNote.save()
+      })
+      .catch(err => {
+        console.log(err);
+        res.json(err);
+      })
     })
 
 module.exports = router;

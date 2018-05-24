@@ -118,7 +118,11 @@ router.post('/login', (req, res, next) => {
 }); // POST /login
 
 router.post('/logout', (req, res) => {
+  if (user.isLoggedIn) {
+    user.isLoggedIn === false;
+  }
   req.logout();
+  req.session.destroy();
   res.status(200).json({
     isLoggedIn: false,
     userInfo: null,

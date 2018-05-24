@@ -86,13 +86,11 @@ passport.use(new LocalStrategy({
   });
 }));
 
-
 app.use(session({
   resave: true,
   saveUninitialized: true,
   secret: "our-passport-local-strategy-app"
 }));
-
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors
@@ -101,6 +99,8 @@ app.use(cors
     origin: ["http://localhost:4200"]  // these are the domains that are allowed
   })
 );
+
+
 
 const index = require('./routes/index');
 app.use('/', index);
