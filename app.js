@@ -86,6 +86,13 @@ passport.use(new LocalStrategy({
   });
 }));
 
+app.use(session({
+  resave: true,
+  saveUninitialized: true,
+  secret: "our-passport-local-strategy-app"
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(cors
   ({
     credentials: true,                 // allow other domains to send cookies
@@ -93,14 +100,7 @@ app.use(cors
   })
 );
 
-app.use(session({
-  resave: true,
-  saveUninitialized: true,
-  secret: "our-passport-local-strategy-app"
-}));
 
-app.use(passport.initialize());
-app.use(passport.session());
 
 const index = require('./routes/index');
 app.use('/', index);

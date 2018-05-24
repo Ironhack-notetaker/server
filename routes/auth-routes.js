@@ -118,23 +118,17 @@ router.post('/login', (req, res, next) => {
 }); // POST /login
 
 router.post('/logout', (req, res) => {
+  if (user.isLoggedIn) {
+    user.isLoggedIn === false;
+  }
   req.logout();
+  req.session.destroy();
   res.status(200).json({
     isLoggedIn: false,
     userInfo: null,
     message: 'Success'
   })
 });
-
-// router.post('/loggedin', (req, res, next) => {
-//   if (req.isAuthenticated()) {
-//     res.json(req.user);
-//     return;
-//   }
-//   res.json({
-//     message: 'Unauthorized'
-//   });
-// });
 
 router.get('/loggedin', (req, res, next) => {
   if (req.user) {
