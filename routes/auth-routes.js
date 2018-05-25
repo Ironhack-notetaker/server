@@ -65,7 +65,9 @@ router.post("/signup", (req, res, next) => {
       req.login(newUser, (err) => {
         if (err) {
           res.status(500).json({
-            message: 'Something went wrong'
+            isLoggedIn: false,
+            userInfo: null,
+            message: 'Unauthorized'
           })
           return;
         }
@@ -101,7 +103,8 @@ router.post('/login', (req, res, next) => {
         
         res.status(200).json({
           isLoggedIn: true,
-          userInfo: user
+          userInfo: user,
+          message: 'Logged in'
         });
       }); // req.login
     })
@@ -117,33 +120,49 @@ router.post('/login', (req, res, next) => {
 
 }); // POST /login
 
-router.post('/logout', (req, res) => {
-  if (user.isLoggedIn) {
-    user.isLoggedIn === false;
-  }
+router.delete('/logout', (req, res) => {
   req.logout();
   req.session.destroy();
   res.status(200).json({
     isLoggedIn: false,
     userInfo: null,
-    message: 'Success'
-  })
+    message: 'Unauthorized'
+  });
 });
 
 router.get('/loggedin', (req, res, next) => {
-  if (req.user) {
-    req.user.password = undefined;
-
-    res.status(200).json({
+  console.log("Backend user: ", req.user)
+  if (req.isAuthenticated()) {
+    res.json({
       isLoggedIn: true,
-      userInfo: req.user
-    })
+      userInfo: req.user,
+      message: 'Success'
+    });
+    return;
   } else {
-    res.status(200).json({
+    res.json({
       isLoggedIn: false,
-      userInfo: null
+      userInfo: null,
+      message: 'Unauthorized'
     })
+    return;
+
   }
+  
+  
+  // if (req.user) {
+  //   req.user.password = undefined;
+
+  //   res.status(200).json({
+  //     isLoggedIn: true,
+  //     userInfo: req.user
+  //   })
+  // } else {
+  //   res.status(200).json({
+  //     isLoggedIn: false,
+  //     userInfo: null
+  //   })
+  // }
 })
 
 router.post('/private', (req, res, next) => {
