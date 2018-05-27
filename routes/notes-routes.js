@@ -32,7 +32,6 @@ router.post('/notes/create', (req, res, next)=>{
       category: req.body.category,
       urgency: req.body.urgency
     }
- 
     Note.create(newNote)
     .then((noteJustCreated)=>{
       res.json(noteJustCreated)

@@ -36,10 +36,14 @@ router.post('/team/new', (req, res, next)=>{
       status: req.body.status,
       theme: req.body.theme
     }
- 
     Team.create(newTeam)
     .then((teamJustCreated)=>{
       res.json(teamJustCreated)
+      User.findById(req.user.userInfo._id)
+      .then((updatedUser) => {
+        updatedUser.userInfo.teams.unshift(clone(newTeam.teamName))
+        updatedUser.userInfo.save()
+      })
     })
     .catch((err)=>{
       res.json(err)
