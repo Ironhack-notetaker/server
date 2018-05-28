@@ -1,6 +1,8 @@
 const express = require('express');
 const router  = express.Router();
 const Note    = require('../models/note');
+const User = require("../models/user");
+
 
 router.get('/notes', (req, res, next) => {
   Note.find()
@@ -25,12 +27,13 @@ router.get('/notes/:id', (req, res, next) => {
 
 //add a NEW task
 router.post('/notes/create', (req, res, next)=>{
-  console.log(req.body);
     const newNote = {
+      user: req.body.user,
       title: req.body.title,
-      content: req.body.content,
+      text: req.body.text,
       category: req.body.category,
-      urgency: req.body.urgency
+      urgency: req.body.urgency,
+      date: Date.now()
     }
     Note.create(newNote)
     .then((noteJustCreated)=>{
@@ -62,7 +65,19 @@ router.post('/notes/create', (req, res, next)=>{
       .catch((err)=>{
         res.json(err)
       })
-
     })
+
+    // router.post('/note/favorites/:id', (req, res, next) => {
+    //   Note.findById(req.params.id)
+    //   .then((note) => {
+    //     User.find( {username: req.user.userInfo.username })
+    //     .then((user) => {
+    //       console.log(user);
+    //       user.userInfo.favorites.push(note);
+    //       user.save();
+    //       console.log(user)
+    //     })
+    //   })
+    // })
 
 module.exports = router;

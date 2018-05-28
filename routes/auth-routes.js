@@ -1,13 +1,15 @@
-const express = require("express");
-const router = express.Router();
-const User = require("../models/user");
-const teamModel = require("../models/team")
+const express     = require("express");
+const router      = express.Router();
+const User        = require("../models/user");
+const Note        = require("../models/note");
+const Team        = require("../models/team")
 const ensureLogin = require("connect-ensure-login");
-const passport = require("passport");
-const flash = require("connect-flash");
-const bcrypt = require("bcryptjs");
-const bcryptSalt = 10;
-const session = require("express-session");
+const passport    = require("passport");
+const flash       = require("connect-flash");
+const bcrypt      = require("bcryptjs");
+const bcryptSalt  = 10;
+const session     = require("express-session");
+const clone       = require('clone');
 
 
 router.post("/signup", (req, res, next) => {
@@ -52,7 +54,6 @@ router.post("/signup", (req, res, next) => {
     const newUser = User({
       username: username,
       password: hashPass,
-      // email: email
     });
 
     newUser.save((err) => {
@@ -125,12 +126,11 @@ router.delete('/logout', (req, res) => {
   res.status(200).json({
     isLoggedIn: false,
     userInfo: null,
-    message: 'Unauthorized'
+    message: 'Logged out'
   });
 });
 
 router.get('/loggedin', (req, res, next) => {
-  console.log("Backend user: ", req.user)
   if (req.isAuthenticated()) {
     res.json({
       isLoggedIn: true,
@@ -147,42 +147,30 @@ router.get('/loggedin', (req, res, next) => {
     return;
   }
 })
-router.get('/quicky', (req, res, next) => {
-    username: req.user.username
-    res.redirect('/api/quicky/:username');
-})
 
-router.post('/user/updateteams/:id', (req, res, next) => {
-  const newTeam = new teamModel ({
-    user: req.body.user,
-    note: req.body.note,
-    teamName: req.body.teamName,
-    urgency: req.body.urgency,
-    status: req.body.status,
-    theme: req.body.theme
-  }) 
-  User.findById(req.params.id)
-  .then((updatedUser) => {
-    updatedUser.userInfo.teams.unshift(clone(newTeam.teamName))
-    updatedUser.userInfo.save()
-    res.json(updatedUser);
-    newTeam.save()
-  })
-  .catch((err) => {
-    res.json(err)
-  })
-})
+// router.get('/quicky', (req, res, next) => {
+//     username: req.user.username
+//     res.redirect('/api/quicky/:username');
+// })
 
-// router.get('/quicky/:username', (req, res, next) => {
-//   User.findOne({username: req.user.username})
-//   .then((thisUser) => {
-//     if (thisUser.username === req.params.username) {
-//       res.json(thisUser.username)
-//     }
+// router.post('/user/updateteams/:id', (req, res, next) => {
+//   const newTeam = new teamModel ({
+//     user: req.body.user,
+//     note: req.body.note,
+//     teamName: req.body.teamName,
+//     urgency: req.body.urgency,
+//     status: req.body.status,
+//     theme: req.body.theme
+//   }) 
+//   User.findById(req.params.id)
+//   .then((updatedUser) => {
+//     updatedUser.userInfo.teams.unshift(clone(newTeam.teamName))
+//     updatedUser.userInfo.save()
+//     res.json(updatedUser);
+//     newTeam.save()
 //   })
 //   .catch((err) => {
-//     res.json(err);
-//     return;
+//     res.json(err)
 //   })
 // })
 
@@ -198,9 +186,57 @@ router.post('/private', (req, res, next) => {
   });
 });
 
-router.post('/user/update', (req, res, next) => {
-
+router.post('/favorites/:id/:noteId', (req, res, next) => {
+  User.findByIdAndUpdate(req.params.id)
+  .then((user) => {
+    console.log(user)
+    Note.findById(req.params.noteId)
+    .then((note) => {
+      user.favorites.unshift(note);
+      res.json(user);
+      user.save();
+    })
+  })
 })
+
+router.post('/team/new', (req, res, next) => {
+  const newTeam = {
+    user: req.body.user,
+    note: req.body.note,
+    teamName: req.body.teamName,
+    urgency: req.body.urgency,
+    status: req.body.status,
+    theme: req.body.theme
+  }
+
+  const teamName = req.body.teamName;
+
+  Team.findOne({
+    teamName: teamName
+  }, "teamName", (err, team) => {
+    if (team !== null) {
+      res.status(400).json({
+        message: "This team name is already taken"
+      })
+      return;
+    }
+  })
+
+  Team.create(newTeam)
+    .then((teamJustCreated) => {
+      res.json(teamJustCreated)
+      User.findById(req.user.userInfo._id)
+        .then((updatedUser) => {
+          updatedUser.userInfo.teams.unshift(clone(newTeam.teamName))
+          res.json(updatedUser)
+          updatedUser.save()
+        })
+    })
+    .catch((err) => {
+      res.json(err)
+    })
+
+});
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
