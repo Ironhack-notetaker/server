@@ -33,6 +33,7 @@ router.post('/notes/create', (req, res, next)=>{
       text: req.body.text,
       category: req.body.category,
       urgency: req.body.urgency,
+      status: req.body.status,
       date: Date.now()
     }
     Note.create(newNote)

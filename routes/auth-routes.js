@@ -174,34 +174,41 @@ router.get('/loggedin', (req, res, next) => {
 //   })
 // })
 
-router.post('/private', (req, res, next) => {
-  if (req.isAuthenticated()) {
-    res.json({
-      message: 'This is a private message'
-    });
-    return;
-  }
-  res.status(403).json({
-    message: 'Unauthorized'
+router.get('/private/:id', (req, res, next) => {
+  User.findById(req.params.id)
+  .then(user => {
+    res.json();
   });
 });
 
 router.post('/favorites/:id/:noteId', (req, res, next) => {
   User.findByIdAndUpdate(req.params.id)
   .then((user) => {
-    console.log(user)
     Note.findById(req.params.noteId)
     .then((note) => {
-      user.favorites.unshift(note);
-      res.json(user);
+      user.favorites.unshift(note._id);
       user.save();
     })
   })
 })
 
+router.post('/removefavorite/:id/:noteId', (req, res, next) => {
+  User.findByIdAndUpdate(req.params.id)
+  .then((user) => {
+    Note.findById(req.params.noteId)
+    .then((note) => {
+      const idIndex = user.favorites.indexOf(note._id)
+      console.log(idIndex)
+      delete user.favorites.splice(idIndex, 1);
+      user.save()
+    })
+  })
+  return;
+})
+
 router.post('/team/new', (req, res, next) => {
   const newTeam = {
-    user: req.body.user,
+    user: req.user,
     note: req.body.note,
     teamName: req.body.teamName,
     urgency: req.body.urgency,
@@ -227,9 +234,9 @@ router.post('/team/new', (req, res, next) => {
       res.json(teamJustCreated)
       User.findById(req.user.userInfo._id)
         .then((updatedUser) => {
-          updatedUser.userInfo.teams.unshift(clone(newTeam.teamName))
+          updatedUser.userInfo.teams.unshift(clone(newTeam._id))
+          updatedUser.userInfo.teams.save()
           res.json(updatedUser)
-          updatedUser.save()
         })
     })
     .catch((err) => {
@@ -237,6 +244,17 @@ router.post('/team/new', (req, res, next) => {
     })
 
 });
+
+router.get('/getfavorites', (req, res, next) => {
+  Note.find({_id: req.user.favorites})
+    .exec()
+    .then((noteResult) => {
+      res.json(noteResult)
+    })
+    .catch((err) => {
+      res.json(err);
+    })
+})
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {

@@ -3,9 +3,9 @@ const Schema   = mongoose.Schema;
 
 const noteSchema = new Schema({
   user: String,
-  title : String,
+  title: String,
   text: {type: String, default: ''},
-  status: {type: String, default: 'unfinished'},
+  status: String,
   urgency: String,
   category: {type: String, default: 'Notes'},
   date: {type: Date, default: Date.now()},
