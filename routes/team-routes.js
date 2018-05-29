@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Team = require('../models/team');
-const NoteModel = require('../models/note');
+const Note = require('../models/note');
 const clone = require('clone');
 
 router.get('/team', (req, res, next) => {
@@ -25,47 +25,6 @@ router.get('/team/:teamID', (req, res, next) => {
     })
 });
 
-//add a NEW task
-// router.post('/team/new', (req, res, next) => {
-
-//   const newTeam = {
-//     user: req.body.user,
-//     note: req.body.note,
-//     teamName: req.body.teamName,
-//     urgency: req.body.urgency,
-//     status: req.body.status,
-//     theme: req.body.theme
-//   }
-
-//   const teamName = req.body.teamName;
-
-//   Team.findOne({
-//     teamName: teamName
-//   }, "teamName", (err, team) => {
-//     if (team !== null) {
-//       res.status(400).json({
-//         message: "This team name is already taken"
-//       })
-//       return;
-//     }
-//   })
-
-//   Team.create(newTeam)
-//     .then((teamJustCreated) => {
-//       res.json(teamJustCreated)
-//       User.findById(user.userInfo._id)
-//         .then((updatedUser) => {
-//           updatedUser.userInfo.teams.unshift(clone(newTeam.teamName))
-//           updatedUser.userInfo.teams.save()
-//           res.json(updatedUser)
-//         })
-//     })
-//     .catch((err) => {
-//       res.json(err)
-//     })
-
-// });
-
 router.post('/team/delete/:id', (req, res, next) => {
   Team.findByIdAndRemove(req.params.id)
     .then((teamJustDeleted) => {
@@ -81,7 +40,7 @@ router.post('/team/update/:id', (req, res, next) => {
   Team.findByIdAndUpdate(req.params.id, req.body)
     .then((updatedTeam) => {
       res.json(updatedTeam)
-      req.updatedTeam.save();
+      updatedTeam.save();
     })
     .catch((err) => {
       res.json(err)
@@ -90,8 +49,8 @@ router.post('/team/update/:id', (req, res, next) => {
 })
 
 router.post('/team/notes/:id', (req, res, next) => {
-  const newNote = new NoteModel({
-    user: req.body.user,
+  const newNote = new Note({
+    user: req.user.username,
     title: req.body.title,
     text: req.body.text,
     status: req.body.status,
@@ -104,7 +63,7 @@ router.post('/team/notes/:id', (req, res, next) => {
   Team.findById(req.params.id)
     .then((team) => {
       console.log(team);
-      team.note.unshift(clone(newNote))
+      team.note.unshift(newNote._id)
       team.save()
       res.json(team)
       newNote.save()
@@ -113,6 +72,21 @@ router.post('/team/notes/:id', (req, res, next) => {
       console.log(err);
       res.json(err);
     })
+})
+
+router.get('/getteamnotes/:id', (req, res, next) => {
+  Team.findById(req.params.id)
+  .then((team) => {
+    Note.find({_id: team.note})
+    .exec()
+    .then((noteResult) => {
+      console.log(noteResult)
+      res.json(noteResult);
+    })
+    .catch((err) => {
+      res.json(err);
+    })
+  })
 })
 
 module.exports = router;
