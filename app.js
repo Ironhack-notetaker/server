@@ -101,7 +101,7 @@ app.use(cors
 );
 
 app.use((req, res, next) => {
-  res.sendfile(__dirname + '/public/client/index.html');
+  res.sendfile(__dirname + './public/client/index.html');
 });
 
 const index = require('./routes/index');
