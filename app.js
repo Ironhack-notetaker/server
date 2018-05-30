@@ -100,9 +100,6 @@ app.use(cors
   })
 );
 
-app.use((req, res, next) => {
-  res.sendfile(__dirname + './public/client/index.html');
-});
 
 const index = require('./routes/index');
 app.use('/', index);
@@ -113,5 +110,8 @@ app.use('/', noteApi);
 const teamApi = require('./routes/team-routes')
 app.use('/', teamApi);
 
+app.use((req, res, next) => {
+  res.sendfile(__dirname + '/public/client/index.html');
+});
 
 module.exports = app;
