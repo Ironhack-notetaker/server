@@ -85,7 +85,7 @@ router.post('/login', (req, res, next) => {
     .then((user) => {
       if (user === null) {
         res.status(400).json({
-          error: 'Username is invalid'
+          message: 'Username is invalid'
         });
         return;
       }
@@ -93,7 +93,7 @@ router.post('/login', (req, res, next) => {
         bcrypt.compareSync(req.body.password, user.password);
       if (isPasswordGood === false) {
         res.status(400).json({
-          error: 'Password is invalid'
+          message: 'Password is invalid'
         });
         return;
       }
@@ -114,7 +114,7 @@ router.post('/login', (req, res, next) => {
       console.log(err);
 
       res.status(500).json({
-        error: 'Log in database error'
+        message: 'Log in server error'
       });
     });
 
@@ -289,32 +289,5 @@ function ensureAuthenticated(req, res, next) {
     res.status(200).json(req.user);
   }
 }
-
-// router.get('/quicky', (req, res, next) => {
-//     username: req.user.username
-//     res.redirect('/api/quicky/:username');
-// })
-
-// router.post('/user/updateteams/:id', (req, res, next) => {
-//   const newTeam = new teamModel ({
-//     user: req.body.user,
-//     note: req.body.note,
-//     teamName: req.body.teamName,
-//     urgency: req.body.urgency,
-//     status: req.body.status,
-//     theme: req.body.theme
-//   }) 
-//   User.findById(req.params.id)
-//   .then((updatedUser) => {
-//     updatedUser.userInfo.teams.unshift(clone(newTeam.teamName))
-//     updatedUser.userInfo.save()
-//     res.json(updatedUser);
-//     newTeam.save()
-//   })
-//   .catch((err) => {
-//     res.json(err)
-//   })
-// })
-
 
 module.exports = router;

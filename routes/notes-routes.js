@@ -1,7 +1,7 @@
 const express = require('express');
 const router  = express.Router();
 const Note    = require('../models/note');
-const User = require("../models/user");
+const User    = require("../models/user");
 
 
 router.get('/notes', (req, res, next) => {
@@ -76,18 +76,5 @@ router.post('/notes/create', (req, res, next)=>{
         res.json(err);
       })
     })
-
-    // router.post('/note/favorites/:id', (req, res, next) => {
-    //   Note.findById(req.params.id)
-    //   .then((note) => {
-    //     User.find( {username: req.user.userInfo.username })
-    //     .then((user) => {
-    //       console.log(user);
-    //       user.userInfo.favorites.push(note);
-    //       user.save();
-    //       console.log(user)
-    //     })
-    //   })
-    // })
 
 module.exports = router;
