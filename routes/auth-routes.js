@@ -182,7 +182,7 @@ router.post('/removefavorite/:id/:noteId', (req, res, next) => {
 
 router.post('/team/new', (req, res, next) => {
   const newTeam = {
-    user: req.body.user,
+    user: req.user.username,
     note: req.body.note,
     teamName: req.body.teamName,
     urgency: req.body.urgency,

@@ -18,7 +18,7 @@ const cors           = require('cors');
 
 mongoose.Promise = Promise;
 mongoose
-  .connect('mongodb://localhost/server', {useMongoClient: true})
+  .connect(process.env.MONGODB_URI, {useMongoClient: true})
   .then(() => {
     console.log('Connected to Mongo!')
   }).catch(err => {
@@ -100,7 +100,9 @@ app.use(cors
   })
 );
 
-
+app.use((req, res, next) => {
+  res.sendfile(__dirname + '/public/client/index.html');
+});
 
 const index = require('./routes/index');
 app.use('/', index);

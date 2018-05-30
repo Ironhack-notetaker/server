@@ -65,6 +65,18 @@ router.post('/notes/create', (req, res, next)=>{
       })
     })
 
+    router.post('/note/adduser/:id', (req, res, next) => {
+      Note.findById(req.params.id)
+      .then((updatedNote) => {
+        updatedNote.user.unshift(req.body.username);
+        updatedNote.save();
+        res.json(updatedNote);
+      })
+      .catch((err) => {
+        res.json(err);
+      })
+    })
+
     // router.post('/note/favorites/:id', (req, res, next) => {
     //   Note.findById(req.params.id)
     //   .then((note) => {

@@ -63,10 +63,10 @@ router.post('/team/notes/:id', (req, res, next) => {
   Team.findById(req.params.id)
     .then((team) => {
       console.log(team);
-      team.note.unshift(newNote._id)
-      team.save()
-      res.json(team)
-      newNote.save()
+      team.note.unshift(newNote._id);
+      team.save();
+      res.json(team);
+      newNote.save();
     })
     .catch(err => {
       console.log(err);
@@ -86,6 +86,18 @@ router.get('/getteamnotes/:id', (req, res, next) => {
     .catch((err) => {
       res.json(err);
     })
+  })
+})
+
+router.post('/team/adduser/:id', (req, res, next) => {
+  Team.findById(req.params.id)
+  .then((updatedTeam) => {
+    updatedTeam.user.unshift(req.body.username);
+    updatedTeam.save();
+    res.json(updatedTeam);
+  })
+  .catch((err) => {
+    res.json(err);
   })
 })
 
