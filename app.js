@@ -111,7 +111,7 @@ const teamApi = require('./routes/team-routes')
 app.use('/', teamApi);
 
 app.use((req, res, next) => {
-  res.sendfile(__dirname + '/public/client/index.html');
+  res.sendfile(__dirname + '/public/index.html');
 });
 
 module.exports = app;

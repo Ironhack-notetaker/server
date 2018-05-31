@@ -68,12 +68,30 @@ router.post('/notes/create', (req, res, next)=>{
     router.post('/note/adduser/:id', (req, res, next) => {
       Note.findById(req.params.id)
       .then((updatedNote) => {
-        updatedNote.user.unshift(req.body.username);
-        updatedNote.save();
-        res.json(updatedNote);
+        User.findOne({username: req.body.username})
+        .then((user) => {
+          if (!updatedNote.user.includes(user.username)) {
+            updatedNote.user.unshift(user.username);
+            updatedNote.save();
+            res.json(updatedNote);
+          } else {
+            res.json({
+              message: "This user is already in the team"
+            })
+            return;
+          }
+        })
+        .catch(() => {
+          res.json({
+            message: "Username not found"
+          })
+          return;
+        })        
       })
-      .catch((err) => {
-        res.json(err);
+      .catch(() => {
+        res.json({
+          message: "errors"
+        });
       })
     })
 

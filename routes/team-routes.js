@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Team = require('../models/team');
 const Note = require('../models/note');
+const User = require('../models/user')
 const clone = require('clone');
 
 router.get('/team', (req, res, next) => {
@@ -92,12 +93,29 @@ router.get('/getteamnotes/:id', (req, res, next) => {
 router.post('/team/adduser/:id', (req, res, next) => {
   Team.findById(req.params.id)
   .then((updatedTeam) => {
-    updatedTeam.user.unshift(req.body.username);
-    updatedTeam.save();
-    res.json(updatedTeam);
+    User.findOne({username: req.body.username})
+    .then((user) => {
+      if (!updatedTeam.user.includes(user.username)) {
+        updatedTeam.user.unshift(user.username);
+        updatedTeam.save();
+        res.json(updatedTeam);
+      } else {
+        res.json({
+          message: "This user is already in the team"
+        })
+        return;
+      }
+    })
+    .catch(() => {
+      res.json({
+        message: "Username not found"
+      })
+    })
   })
-  .catch((err) => {
-    res.json(err);
+  .catch(() => {
+    res.json({
+      message: "error"
+    });
   })
 })
 
