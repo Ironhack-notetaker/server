@@ -99,7 +99,7 @@ app.use(passport.session());
 app.use(cors
   ({
     credentials: true,                 // allow other domains to send cookies
-    origin: ["https://note-share-01.herokuapp.com"]  // these are the domains that are allowed
+    origin: ["http://localhost:4200"]  // these are the domains that are allowed
   })
 );
 
