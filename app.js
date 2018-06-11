@@ -25,9 +25,6 @@ mongoose
     console.error('Error connecting to mongo', err)
   });
 
-
-console.log("======================================", process.env.MONGODB_URI);
-
 const app_name = require('./package.json').name;
 const debug = require('debug')(`${app_name}:${path.basename(__filename).split('.')[0]}`);
 
